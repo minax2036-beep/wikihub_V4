@@ -76,3 +76,4 @@
     .wiki-article-date { font-size: 9px; }
     .wiki-hero-meta { flex-wrap: wrap; }
 }
+.wiki-article-link{color:inherit;text-decoration:none;cursor:pointer;transition:transform .15s,border-color .15s}.wiki-article-link:hover{border-color:#b9b1f4;transform:translateY(-2px)}
