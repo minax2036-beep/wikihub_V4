@@ -1,0 +1,120 @@
+/* Secondary button */
+
+.secondary-button {
+    min-height: 41px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: white;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.secondary-button:hover {
+    background: var(--surface-soft);
+}
+
+/* Modal */
+
+.modal {
+    width: min(440px, calc(100% - 30px));
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: white;
+    color: var(--text);
+    box-shadow: 0 20px 70px rgba(20, 25, 45, 0.2);
+}
+
+.modal::backdrop {
+    background: rgba(22, 26, 43, 0.48);
+    backdrop-filter: blur(3px);
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: #f2f3f7;
+    color: #777f91;
+    font-size: 21px;
+}
+
+.modal label {
+    display: block;
+    margin: 16px 0 7px;
+    color: #555e70;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.modal input,
+.modal textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+    background: #fafbfc;
+    color: var(--text);
+    font-size: 12px;
+    resize: vertical;
+}
+
+.modal input:focus,
+.modal textarea:focus {
+    border-color: var(--primary);
+    background: white;
+}
+
+.modal input::placeholder,
+.modal textarea::placeholder {
+    color: #aab0bd;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 24px;
+}
+
+/* Toast */
+
+.toast {
+    position: fixed;
+    z-index: 100;
+    right: 24px;
+    bottom: 24px;
+    max-width: calc(100% - 48px);
+    padding: 13px 18px;
+    border: 1px solid #45475e;
+    border-radius: 10px;
+    background: #292b3d;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
