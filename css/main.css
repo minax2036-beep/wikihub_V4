@@ -831,3 +831,53 @@ button {
         flex-direction: column;
     }
 }
+
+
+/* WikiHub V4.1 dynamic home content */
+.home-wiki-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-wiki-cover {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.home-empty-state {
+    width: 100%;
+    padding: 32px 20px;
+    border: 1px dashed #c9c5ee;
+    border-radius: var(--radius);
+    background: #faf9ff;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 12px;
+}
+
+.home-empty-state strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--text);
+}
+
+.home-empty-state p {
+    margin: 7px 0 0;
+    font-size: 11px;
+}
+
+.home-empty-icon {
+    font-size: 30px;
+}
+
+.wiki-grid .empty-message {
+    grid-column: 1 / -1;
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
