@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             return `
                 <a class="wiki-card home-wiki-card"
-                   href="wikis.html"
+                   href="wiki.html?id=${encodeURIComponent(wiki.id)}"
                    data-search-item="${escapeHTML(wiki.name)} ${escapeHTML(wiki.description)}"
-                   aria-label="${escapeHTML(wiki.name)} のWiki管理を開く">
+                   aria-label="${escapeHTML(wiki.name)} を開く">
                     <div class="wiki-card-top">
                         <div class="wiki-cover home-wiki-cover"
                              style="background:${color};">
