@@ -27,10 +27,10 @@
                 <span>ホーム</span>
             </a>
 
-            <button class="nav-item" data-action="wikis">
+            <a href="wikis.html" class="nav-item">
                 <span class="nav-icon">▤</span>
                 <span>Wiki一覧</span>
-            </button>
+            </a>
 
             <button class="nav-item" data-action="articles">
                 <span class="nav-icon">▧</span>
@@ -70,7 +70,7 @@
 
             <div class="sidebar-version">
                 <span class="status-dot"></span>
-                WikiHub V4.0 Preview
+                WikiHub V4.1
             </div>
         </div>
     </aside>
@@ -141,7 +141,7 @@
                         <span class="stat-icon purple">▤</span>
                         <span class="stat-label">WIKIS</span>
                     </div>
-                    <div class="stat-number" id="wikiCount">2</div>
+                    <div class="stat-number" id="wikiCount">—</div>
                     <div class="stat-description">作成したWiki</div>
                 </div>
 
@@ -150,7 +150,7 @@
                         <span class="stat-icon blue">▧</span>
                         <span class="stat-label">ARTICLES</span>
                     </div>
-                    <div class="stat-number" id="articleCount">12</div>
+                    <div class="stat-number" id="articleCount">—</div>
                     <div class="stat-description">登録された記事</div>
                 </div>
 
@@ -159,7 +159,7 @@
                         <span class="stat-icon orange">#</span>
                         <span class="stat-label">TAGS</span>
                     </div>
-                    <div class="stat-number" id="tagCount">8</div>
+                    <div class="stat-number" id="tagCount">—</div>
                     <div class="stat-description">使用中のタグ</div>
                 </div>
 
@@ -168,7 +168,7 @@
                         <span class="stat-icon green">◷</span>
                         <span class="stat-label">RECENT</span>
                     </div>
-                    <div class="stat-number" id="recentCount">4</div>
+                    <div class="stat-number" id="recentCount">—</div>
                     <div class="stat-description">最近更新された記事</div>
                 </div>
             </section>
@@ -181,55 +181,15 @@
                         <h2>マイWiki</h2>
                     </div>
 
-                    <button class="text-button" data-action="wikis">
-                        すべて表示 →
-                    </button>
+                    <a class="text-button" href="wikis.html">すべて表示 →</a>
                 </div>
 
                 <div class="wiki-grid" id="wikiGrid">
-
-                    <article class="wiki-card" data-search-item="ポーランドボールwiki 国 歴史 地理">
-                        <div class="wiki-card-top">
-                            <div class="wiki-cover cover-polandball">🌐</div>
-                            <button class="more-button" aria-label="その他">···</button>
-                        </div>
-
-                        <div class="wiki-card-body">
-                            <div class="wiki-category">HISTORY & GEOGRAPHY</div>
-                            <h3>ポーランドボールwiki</h3>
-                            <p>国や歴史、地理などについてまとめるWiki。</p>
-
-                            <div class="wiki-card-footer">
-                                <span>▧ 8 記事</span>
-                                <span>更新: 最近</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="wiki-card" data-search-item="テクノロジーwiki 技術 コンピューター">
-                        <div class="wiki-card-top">
-                            <div class="wiki-cover cover-tech">⌘</div>
-                            <button class="more-button" aria-label="その他">···</button>
-                        </div>
-
-                        <div class="wiki-card-body">
-                            <div class="wiki-category">TECHNOLOGY</div>
-                            <h3>テクノロジーwiki</h3>
-                            <p>コンピューターや技術についてのメモ。</p>
-
-                            <div class="wiki-card-footer">
-                                <span>▧ 4 記事</span>
-                                <span>更新: 最近</span>
-                            </div>
-                        </div>
-                    </article>
-
                     <button class="new-wiki-card" id="newWikiCard">
                         <span class="new-wiki-icon">＋</span>
                         <strong>新しいWikiを作成</strong>
                         <span>自分だけの知識ベースを作ろう</span>
                     </button>
-
                 </div>
             </section>
 
@@ -247,43 +207,10 @@
                 </div>
 
                 <div class="recent-list" id="recentList">
-
-                    <article class="recent-item" data-search-item="ポーランド ポーランドボール 国">
-                        <div class="article-icon article-purple">🌐</div>
-                        <div class="recent-info">
-                            <h3>ポーランド</h3>
-                            <p>ポーランドボールwiki <span>・</span> 国</p>
-                        </div>
-                        <div class="recent-date">最近更新</div>
-                    </article>
-
-                    <article class="recent-item" data-search-item="日本 日本国 歴史">
-                        <div class="article-icon article-red">🇯🇵</div>
-                        <div class="recent-info">
-                            <h3>日本</h3>
-                            <p>ポーランドボールwiki <span>・</span> 国</p>
-                        </div>
-                        <div class="recent-date">最近更新</div>
-                    </article>
-
-                    <article class="recent-item" data-search-item="Linux オペレーティングシステム">
-                        <div class="article-icon article-blue">🐧</div>
-                        <div class="recent-info">
-                            <h3>Linux</h3>
-                            <p>テクノロジーwiki <span>・</span> OS</p>
-                        </div>
-                        <div class="recent-date">最近更新</div>
-                    </article>
-
-                    <article class="recent-item" data-search-item="Raspberry Pi ラズベリーパイ">
-                        <div class="article-icon article-orange">◉</div>
-                        <div class="recent-info">
-                            <h3>Raspberry Pi</h3>
-                            <p>テクノロジーwiki <span>・</span> ハードウェア</p>
-                        </div>
-                        <div class="recent-date">最近更新</div>
-                    </article>
-
+                    <div class="home-empty-state">
+                        <div class="home-empty-icon">📝</div>
+                        <strong>記事を読み込んでいます...</strong>
+                    </div>
                 </div>
             </section>
 
