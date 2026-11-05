@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="wiki-article-tags">${tags}</div>
                     </div>
                     <div class="wiki-article-date">更新<br>${formatDate(article.updatedAt)}</div>
-                </article>
+                </a>
             `;
         }).join("");
     }
