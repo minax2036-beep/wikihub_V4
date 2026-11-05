@@ -32,11 +32,11 @@
 <div class="add-block-panel">
 <label for="blockType">追加するブロック</label>
 <select id="blockType">
-<option value="paragraph">本文</option><option value="heading">見出し</option><option value="subheading">小見出し</option><option value="quote">引用</option><option value="list">箇条書き</option><option value="divider">水平線</option><option value="image">画像（URL）</option>
+<option value="paragraph">本文</option><option value="heading">見出し</option><option value="subheading">小見出し</option><option value="quote">引用</option><option value="list">箇条書き</option><option value="divider">水平線</option><option value="image">画像アップロード</option><option value="video">動画アップロード</option><option value="audio">音声アップロード</option>
 </select>
 <button class="primary-button" id="addBlockButton">＋ ブロックを追加</button>
 </div>
-<p class="editor-note">画像は現在URL指定に対応しています。ファイルの直接アップロードはメディア機能の段階で追加予定です。</p>
+<p class="editor-note">画像・動画・音声ファイルを端末からアップロードできます。1ファイル100MBまで。ファイルはこのブラウザのIndexedDBに保存されるため、別の端末とは自動同期されません。</p>
 </section>
 <div class="editor-bottom-actions"><a id="cancelEditorLinkBottom" href="wikis.html" class="secondary-button">キャンセル</a><button class="primary-button" id="saveArticleButtonBottom">保存して記事を表示</button></div>
 </div>
