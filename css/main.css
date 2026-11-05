@@ -881,3 +881,5 @@ button:disabled {
     cursor: wait;
     opacity: 0.65;
 }
+
+.home-recent-link{display:flex;color:inherit;text-decoration:none;cursor:pointer}.home-recent-link:hover{background:#faf9ff;border-radius:10px}
