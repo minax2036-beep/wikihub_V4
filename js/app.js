@@ -114,6 +114,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Wikiカード全体のクリックを確実に専用ページへ接続する。
+    // 動的にカードを再描画しても、このイベント委譲なら動作する。
+    wikiGrid.addEventListener("click", (event) => {
+        const card = event.target.closest("a.home-wiki-card");
+        if (!card || !wikiGrid.contains(card)) return;
+
+        event.preventDefault();
+        const destination = card.getAttribute("href");
+        if (destination) {
+            window.location.assign(destination);
+        }
+    });
+
     function renderRecentArticles() {
         const recent = articles.slice(0, 5);
 
