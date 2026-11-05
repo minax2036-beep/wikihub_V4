@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fa">
+    <title>Wiki管理 - WikiHub</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/wikis.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">W</div>
+            <div class="brand-name">WikiHub<span>V4</span></div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-label">WORKSPACE</div>
+
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">⌂</span>
+                <span>ホーム</span>
+            </a>
+
+            <a href="wikis.html" class="nav-item active">
+                <span class="nav-icon">▤</span>
+                <span>Wiki一覧</span>
+            </a>
+
+            <button class="nav-item" data-action="articles">
+                <span class="nav-icon">▧</span>
+                <span>すべての記事</span>
+            </button>
+
+            <button class="nav-item" data-action="recent">
+                <span class="nav-icon">◷</span>
+                <span>最近見た記事</span>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-label">TOOLS</div>
+
+            <button class="nav-item" data-action="miniapps">
+                <span class="nav-icon">▦</span>
+                <span>MiniApps</span>
+            </button>
+
+            <button class="nav-item" data-action="xid">
+                <span class="nav-icon">⌘</span>
+                <span>XIDモジュール</span>
+            </button>
+
+            <button class="nav-item" data-action="stats">
+                <span class="nav-icon">▥</span>
+                <span>統計情報</span>
+            </button>
+        </div>
+
+        <div class="sidebar-bottom">
+            <button class="nav-item" data-action="settings">
+                <span class="nav-icon">⚙</span>
+                <span>設定</span>
+            </button>
+
+            <div class="sidebar-version">
+                <span class="status-dot"></span>
+                WikiHub V4.1
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-area">
+
+        <header class="topbar">
+            <button class="icon-button menu-button" id="menuButton">☰</button>
+
+            <div class="breadcrumb">
+                <a href="index.html">WikiHub</a>
+                <span class="breadcrumb-separator">/</span>
+                <strong>Wiki管理</strong>
+            </div>
+
+            <div class="topbar-actions">
+                <a href="index.html" class="home-link">ホームへ戻る</a>
+            </div>
+        </header>
+
+        <div class="page-content">
+
+            <section class="wiki-page-heading">
+                <div>
+                    <div class="eyebrow">WORKSPACE MANAGEMENT</div>
+                    <h1>Wiki管理</h1>
+                    <p>作成したWikiをまとめて管理できます。</p>
+                </div>
+
+                <button class="primary-button" id="createWikiButton">
+                    <span>＋</span>
+                    Wikiを作成
+                </button>
+            </section>
+
+            <section class="wiki-toolbar">
+                <div class="wiki-search">
+                    <span>⌕</span>
+                    <input
+                        type="search"
+                        id="wikiSearch"
+                        placeholder="Wikiを検索..."
+                    >
+                </div>
+
+                <div class="wiki-total">
+                    <strong id="wikiTotal">0</strong>
+                    <span>Wikis</span>
+                </div>
+            </section>
+
+            <section class="managed-wiki-grid" id="managedWikiGrid">
+                <div class="loading-message">Wikiを読み込んでいます...</div>
+            </section>
+
+            <footer class="page-footer">
+                <span>WikiHub V4</span>
+                <span>Build your own knowledge space.</span>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<dialog class="modal" id="wikiDialog">
+    <form id="wikiForm">
+
+        <div class="modal-header">
+            <div>
+                <div class="eyebrow" id="dialogEyebrow">NEW WORKSPACE</div>
+                <h2 id="dialogTitle">Wikiを作成</h2>
+            </div>
+
+            <button type="button" class="modal-close" id="closeDialog">×</button>
+        </div>
+
+        <input type="hidden" id="editingWikiId">
+
+        <label for="wikiName">Wiki名</label>
+        <input
+            type="text"
+            id="wikiName"
+            maxlength="60"
+            placeholder="例：テクノロジーwiki"
+            required
+        >
+
+        <label for="wikiDescription">説明</label>
+        <textarea
+            id="wikiDescription"
+            maxlength="300"
+            rows="3"
+            placeholder="このWikiについて説明..."
+        ></textarea>
+
+        <label for="wikiIcon">アイコン</label>
+        <select id="wikiIcon">
+            <option value="📚">📚 本</option>
+            <option value="🌐">🌐 地球</option>
+            <option value="💻">💻 コンピューター</option>
+            <option value="🔬">🔬 科学</option>
+            <option value="🎮">🎮 ゲーム</option>
+            <option value="📝">📝 メモ</option>
+            <option value="🏛️">🏛️ 歴史</option>
+            <option value="🎨">🎨 アート</option>
+        </select>
+
+        <label for="wikiColor">テーマカラー</label>
+        <input type="color" id="wikiColor" value="#6558e8">
+
+        <div class="modal-actions">
+            <button type="button" class="secondary-button" id="cancelDialog">
+                キャンセル
+            </button>
+
+            <button type="submit" class="primary-button" id="saveWikiButton">
+                作成する
+            </button>
+        </div>
+
+    </form>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/wikis.js"></script>
+
+</body>
+</html>
