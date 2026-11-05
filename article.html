@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7fa">
+<title>記事 - WikiHub</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/wiki.css">
+<link rel="stylesheet" href="css/article.css">
+</head>
+<body>
+<div class="app-layout">
+<aside class="sidebar" id="sidebar">
+<div class="brand"><div class="brand-icon">W</div><div class="brand-name">WikiHub<span>V4</span></div></div>
+<div class="sidebar-section">
+<div class="sidebar-label">WORKSPACE</div>
+<a href="index.html" class="nav-item"><span class="nav-icon">⌂</span><span>ホーム</span></a>
+<a href="wikis.html" class="nav-item active"><span class="nav-icon">▤</span><span>Wiki一覧</span></a>
+</div>
+<div class="sidebar-bottom"><div class="sidebar-version"><span class="status-dot"></span>WikiHub V4</div></div>
+</aside>
+<main class="main-area">
+<header class="topbar">
+<button class="icon-button menu-button" id="menuButton" aria-label="メニュー">☰</button>
+<div class="breadcrumb"><a href="index.html">WikiHub</a><span class="breadcrumb-separator">/</span><a id="wikiBreadcrumb" href="wikis.html">Wiki</a><span class="breadcrumb-separator">/</span><strong id="articleBreadcrumb">記事</strong></div>
+<div class="topbar-actions"><a class="home-link" id="backToWiki" href="wikis.html">Wikiへ戻る</a></div>
+</header>
+<div class="page-content article-page">
+<div class="article-toolbar">
+<div class="eyebrow">WIKIHUB ARTICLE</div>
+<div class="article-toolbar-actions">
+<button class="secondary-button" id="editArticleButton">編集</button>
+<button class="danger-button" id="deleteArticleButton">削除</button>
+</div>
+</div>
+<article class="article-document">
+<header class="article-document-header">
+<div class="article-wiki-label" id="articleWikiLabel">📚 Wiki</div>
+<h1 id="articleTitle">読み込み中...</h1>
+<p class="article-summary" id="articleSummary"></p>
+<div class="article-meta" id="articleMeta"></div>
+<div class="article-tags" id="articleTags"></div>
+</header>
+<div class="article-body" id="articleBody"><p>記事を読み込んでいます...</p></div>
+</article>
+</div>
+</main>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="toast" id="toast"></div>
+<script src="js/storage.js"></script>
+<script src="js/article.js"></script>
+</body>
+</html>
