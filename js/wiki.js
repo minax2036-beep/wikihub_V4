@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         list.innerHTML = filtered.map((article) => {
             const tags = (article.tags || []).map((tag) => `<span class="article-tag">${escapeHTML(tag)}</span>`).join("");
             return `
-                <article class="wiki-article-card">
+                <a class="wiki-article-card wiki-article-link" href="article.html?id=${encodeURIComponent(article.id)}">
                     <div class="wiki-article-icon">${escapeHTML(wiki.icon || "📄")}</div>
                     <div class="wiki-article-main">
                         <h3>${escapeHTML(article.title)}</h3>
@@ -120,15 +120,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const tags = $("#articleTags").value.split(",").map((tag) => tag.trim()).filter(Boolean);
-            await WikiHubStorage.createArticle({
+            const article = await WikiHubStorage.createArticle({
                 wikiId,
                 title,
                 summary: $("#articleSummary").value.trim(),
                 tags
             });
             closeDialog();
-            await loadPage();
-            showToast("記事を作成しました！");
+            window.location.href = "editor.html?id=" + encodeURIComponent(article.id);
         } catch (error) {
             console.error(error);
             showToast("記事の作成に失敗しました: " + error.message);
