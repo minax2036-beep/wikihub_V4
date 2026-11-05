@@ -118,3 +118,18 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+.search-hidden {
+    display: none !important;
+}
+
+.empty-message {
+    padding: 25px;
+    margin-top: 15px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: white;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 12px;
+}
