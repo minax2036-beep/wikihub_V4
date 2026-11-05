@@ -553,6 +553,23 @@
         return deleteFromStore(storeName, id);
     }
 
+    // 記事に保存されているメディア一覧
+    async function getMediaByArticle(type, articleId) {
+        const storeMap = {
+            image: STORES.IMAGES,
+            video: STORES.VIDEOS,
+            audio: STORES.AUDIOS
+        };
+
+        const storeName = storeMap[type];
+
+        if (!storeName) {
+            throw new Error("対応していないメディア形式です。");
+        }
+
+        return getByIndex(storeName, "articleId", articleId);
+    }
+
     // 統計情報
     async function getStatistics() {
         const [wikis, articles] = await Promise.all([
@@ -602,6 +619,7 @@
 
         saveMedia,
         getMedia,
+        getMediaByArticle,
         deleteMedia,
 
         getStatistics
