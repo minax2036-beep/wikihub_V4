@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fa">
+    <title>Wiki - WikiHub</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">W</div>
+            <div class="brand-name">WikiHub<span>V4</span></div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-label">WORKSPACE</div>
+            <a href="index.html" class="nav-item"><span class="nav-icon">⌂</span><span>ホーム</span></a>
+            <a href="wikis.html" class="nav-item active"><span class="nav-icon">▤</span><span>Wiki一覧</span></a>
+            <a href="wikis.html" class="nav-item"><span class="nav-icon">▧</span><span>すべての記事</span></a>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="sidebar-version"><span class="status-dot"></span>WikiHub V4.2</div>
+        </div>
+    </aside>
+
+    <main class="main-area">
+        <header class="topbar">
+            <button class="icon-button menu-button" id="menuButton" aria-label="メニュー">☰</button>
+            <div class="breadcrumb">
+                <a href="index.html">WikiHub</a>
+                <span class="breadcrumb-separator">/</span>
+                <a href="wikis.html">Wiki一覧</a>
+                <span class="breadcrumb-separator">/</span>
+                <strong id="breadcrumbWikiName">Wiki</strong>
+            </div>
+            <div class="topbar-actions">
+                <a href="wikis.html" class="home-link">Wiki一覧へ戻る</a>
+            </div>
+        </header>
+
+        <div class="page-content wiki-detail-content">
+            <section class="wiki-hero" id="wikiHero">
+                <div class="wiki-hero-icon" id="wikiIcon">📚</div>
+                <div class="wiki-hero-info">
+                    <div class="eyebrow">KNOWLEDGE BASE</div>
+                    <h1 id="wikiName">読み込み中...</h1>
+                    <p id="wikiDescription">Wiki情報を読み込んでいます。</p>
+                    <div class="wiki-hero-meta">
+                        <span id="wikiArticleCount">0 記事</span>
+                        <span id="wikiUpdatedAt">更新日: --</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="wiki-articles-section">
+                <div class="wiki-section-heading">
+                    <div>
+                        <div class="eyebrow">ARTICLES</div>
+                        <h2>記事一覧</h2>
+                    </div>
+                    <button class="primary-button" id="createArticleButton"><span>＋</span>記事を作成</button>
+                </div>
+
+                <div class="wiki-article-toolbar">
+                    <input type="search" id="articleSearch" placeholder="このWikiの記事を検索..." autocomplete="off">
+                    <span id="articleTotal">0 件</span>
+                </div>
+
+                <div class="wiki-article-list" id="articleList">
+                    <div class="loading-message">記事を読み込んでいます...</div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<dialog class="modal" id="articleDialog">
+    <form id="articleForm">
+        <div class="modal-header">
+            <div>
+                <div class="eyebrow">NEW ARTICLE</div>
+                <h2>記事を作成</h2>
+            </div>
+            <button type="button" class="modal-close" id="closeArticleDialog">×</button>
+        </div>
+        <label for="articleTitle">記事タイトル</label>
+        <input id="articleTitle" type="text" maxlength="120" placeholder="例：Raspberry Piとは" required>
+        <label for="articleSummary">概要</label>
+        <textarea id="articleSummary" rows="4" maxlength="1000" placeholder="記事の概要を入力..."></textarea>
+        <label for="articleTags">タグ（カンマ区切り）</label>
+        <input id="articleTags" type="text" maxlength="300" placeholder="例：技術, Raspberry Pi, Linux">
+        <p class="form-hint">本文のブロック編集機能は次の段階で追加する予定です。</p>
+        <div class="modal-actions">
+            <button type="button" class="secondary-button" id="cancelArticleButton">キャンセル</button>
+            <button type="submit" class="primary-button" id="saveArticleButton">作成する</button>
+        </div>
+    </form>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script src="js/storage.js"></script>
+<script src="js/wiki.js"></script>
+</body>
+</html>
