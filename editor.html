@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7fa">
+<title>記事エディター - WikiHub</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/wiki.css">
+<link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+<div class="app-layout">
+<aside class="sidebar" id="sidebar">
+<div class="brand"><div class="brand-icon">W</div><div class="brand-name">WikiHub<span>V4</span></div></div>
+<div class="sidebar-section"><div class="sidebar-label">WORKSPACE</div><a href="index.html" class="nav-item"><span class="nav-icon">⌂</span><span>ホーム</span></a><a href="wikis.html" class="nav-item active"><span class="nav-icon">▤</span><span>Wiki一覧</span></a></div>
+<div class="sidebar-bottom"><div class="sidebar-version"><span class="status-dot"></span>WikiHub V4</div></div>
+</aside>
+<main class="main-area">
+<header class="topbar"><button class="icon-button menu-button" id="menuButton" aria-label="メニュー">☰</button><div class="breadcrumb"><a href="index.html">WikiHub</a><span class="breadcrumb-separator">/</span><a id="wikiBreadcrumb" href="wikis.html">Wiki</a><span class="breadcrumb-separator">/</span><strong>記事エディター</strong></div><div class="topbar-actions"><button class="primary-button" id="saveArticleButton">保存</button></div></header>
+<div class="page-content editor-page">
+<div class="editor-heading"><div><div class="eyebrow">ARTICLE EDITOR</div><h1>記事エディター</h1><p>ブロックを追加して、自由な順番で記事を構成できます。</p></div><a id="cancelEditorLink" class="home-link" href="wikis.html">キャンセル</a></div>
+<section class="editor-metadata">
+<label for="editorTitle">記事タイトル</label><input id="editorTitle" type="text" maxlength="160" placeholder="記事タイトル" required>
+<label for="editorSummary">概要</label><textarea id="editorSummary" rows="3" maxlength="1200" placeholder="記事の概要"></textarea>
+<label for="editorTags">タグ（カンマ区切り）</label><input id="editorTags" type="text" maxlength="500" placeholder="技術, Linux, Raspberry Pi">
+</section>
+<section class="editor-content-section">
+<div class="editor-section-heading"><div><div class="eyebrow">CONTENT BLOCKS</div><h2>本文</h2></div><span id="blockCount">0 ブロック</span></div>
+<div id="blockList" class="editor-block-list"></div>
+<div class="add-block-panel">
+<label for="blockType">追加するブロック</label>
+<select id="blockType">
+<option value="paragraph">本文</option><option value="heading">見出し</option><option value="subheading">小見出し</option><option value="quote">引用</option><option value="list">箇条書き</option><option value="divider">水平線</option><option value="image">画像（URL）</option>
+</select>
+<button class="primary-button" id="addBlockButton">＋ ブロックを追加</button>
+</div>
+<p class="editor-note">画像は現在URL指定に対応しています。ファイルの直接アップロードはメディア機能の段階で追加予定です。</p>
+</section>
+<div class="editor-bottom-actions"><a id="cancelEditorLinkBottom" href="wikis.html" class="secondary-button">キャンセル</a><button class="primary-button" id="saveArticleButtonBottom">保存して記事を表示</button></div>
+</div>
+</main>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div><div class="toast" id="toast"></div>
+<script src="js/storage.js"></script><script src="js/editor.js"></script>
+</body>
+</html>
