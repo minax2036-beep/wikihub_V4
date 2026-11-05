@@ -44,6 +44,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (["image", "video", "audio"].includes(block.type)) {
             const media = await WikiHubStorage.getMedia(block.type, content);
+
+            // V4初期版の画像URLブロックとの互換性を維持
+            if (!media && block.type === "image" && /^https?:\\/\\//i.test(content.trim())) {
+                return '<figure class="article-image"><img src="' + escapeHTML(content.trim()) +
+                    '" alt="' + escapeHTML(block.settings?.alt || "") + '">' +
+                    (block.settings?.caption ? '<figcaption>' + escapeHTML(block.settings.caption) + '</figcaption>' : '') +
+                    '</figure>';
+            }
+
             if (!media || !media.blob) {
                 return '<p class="article-invalid-media">メディアファイルを読み込めませんでした。</p>';
             }
