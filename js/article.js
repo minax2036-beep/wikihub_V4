@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const media = await WikiHubStorage.getMedia(block.type, content);
 
             // V4初期版の画像URLブロックとの互換性を維持
-            if (!media && block.type === "image" && /^https?:\\/\\//i.test(content.trim())) {
+            if (!media && block.type === "image" && /^https?:\/\//i.test(content.trim())) {
                 return '<figure class="article-image"><img src="' + escapeHTML(content.trim()) +
                     '" alt="' + escapeHTML(block.settings?.alt || "") + '">' +
                     (block.settings?.caption ? '<figcaption>' + escapeHTML(block.settings.caption) + '</figcaption>' : '') +
