@@ -150,14 +150,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             const tagText = tags.length ? " ・ " + tags.slice(0, 2).map(escapeHTML).join(" / ") : "";
 
             return `
-                <article class="recent-item" data-search-item="${escapeHTML(article.title)} ${escapeHTML(wikiName)} ${escapeHTML(tags.join(" "))}">
+                <a class="recent-item home-recent-link" href="article.html?id=${encodeURIComponent(article.id)}" data-search-item="${escapeHTML(article.title)} ${escapeHTML(wikiName)} ${escapeHTML(tags.join(" "))}">
                     <div class="article-icon ${colors[index % colors.length]}">${escapeHTML(icon)}</div>
                     <div class="recent-info">
                         <h3>${escapeHTML(article.title)}</h3>
                         <p>${escapeHTML(wikiName)}${tagText}</p>
                     </div>
                     <div class="recent-date">${formatDate(article.updatedAt)}</div>
-                </article>
+                </a>
             `;
         }).join("");
     }
