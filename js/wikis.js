@@ -231,6 +231,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         const editButton = event.target.closest("[data-edit-id]");
         const deleteButton = event.target.closest("[data-delete-id]");
 
+        // Wiki管理画面では、編集・削除ボタン以外のカード部分からも開ける。
+        const card = event.target.closest(".managed-wiki-card");
+        if (card && !editButton && !deleteButton && !event.target.closest("a")) {
+            const wikiId = card.dataset.wikiId;
+            if (wikiId) {
+                window.location.assign("wiki.html?id=" + encodeURIComponent(wikiId));
+            }
+            return;
+        }
+
         if (editButton) {
             const wiki = wikis.find((item) => {
                 return item.id === editButton.dataset.editId;
