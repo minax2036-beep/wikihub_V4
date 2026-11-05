@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
 
                     <div class="managed-wiki-content">
-                        <h3>${escapeHTML(wiki.name)}</h3>
+                        <h3><a class="managed-wiki-title-link" href="wiki.html?id=${encodeURIComponent(wiki.id)}">${escapeHTML(wiki.name)}</a></h3>
 
                         <p>
                             ${escapeHTML(wiki.description || "説明はまだありません。")}
