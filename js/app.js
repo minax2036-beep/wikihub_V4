@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const newWikiCard = $("#newWikiCard");
     const createWikiDialog = $("#createWikiDialog");
     const createWikiForm = $("#createWikiForm");
+    const homeWikiGroup = $("#homeWikiGroup");
     const closeWikiDialog = $("#closeWikiDialog");
     const cancelWikiButton = $("#cancelWikiButton");
 
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let wikis = [];
     let articles = [];
+    let groups = [];
     let toastTimer = null;
 
     function showToast(message) {
@@ -165,9 +167,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function refreshHome() {
         await WikiHubStorage.init();
 
-        [wikis, articles] = await Promise.all([
+        [wikis, articles, groups] = await Promise.all([
             WikiHubStorage.getAllWikis(),
-            WikiHubStorage.getAllArticles()
+            WikiHubStorage.getAllArticles(),
+            WikiHubStorage.getAllGroups()
         ]);
 
         const statistics = await WikiHubStorage.getStatistics();
@@ -180,6 +183,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function openWikiDialog() {
         createWikiForm.reset();
+        homeWikiGroup.innerHTML = groups.map(group =>
+            '<option value="' + escapeHTML(group.id) + '">' + escapeHTML(group.name) + '</option>'
+        ).join("");
+        homeWikiGroup.value = (groups.find(group => group.isDefault) || groups[0] || {}).id || "";
         createWikiDialog.showModal();
         setTimeout(() => $("#wikiName").focus(), 50);
     }
@@ -211,6 +218,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await WikiHubStorage.createWiki({
                 name,
                 description,
+                groupId: homeWikiGroup.value,
                 icon: "📚",
                 color: "#6558e8"
             });
