@@ -230,3 +230,5 @@
         flex-direction: column;
     }
 }
+
+.wiki-group-label{min-height:0!important;margin:0 0 7px!important;color:var(--primary)!important;font-size:10px!important;font-weight:700;}
