@@ -73,11 +73,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ? '<p class="media-upload-status">保存済み: ' + escapeHTML(fileName) + '</p>'
                     : '<p class="media-upload-status">ファイルを選択してください。</p>';
 
+                const supportsSize = block.type === "image" || block.type === "video";
+                const width = Math.min(100, Math.max(20, Number(block.settings?.width) || 100));
+                const align = ["left", "center", "right"].includes(block.settings?.align)
+                    ? block.settings.align : "center";
+                const sizeControls = supportsSize
+                    ? '<div class="media-size-controls">' +
+                        '<label>表示サイズ <strong data-width-value="' + index + '">' + width + '%</strong>' +
+                        '<input type="range" min="20" max="100" step="5" value="' + width +
+                        '" data-width="' + index + '"></label>' +
+                        '<label>配置<select data-align="' + index + '">' +
+                        '<option value="left"' + (align === "left" ? " selected" : "") + '>左寄せ</option>' +
+                        '<option value="center"' + (align === "center" ? " selected" : "") + '>中央</option>' +
+                        '<option value="right"' + (align === "right" ? " selected" : "") + '>右寄せ</option>' +
+                        '</select></label></div>'
+                    : "";
                 return '<div class="editor-block media-editor-block"><div class="editor-block-top"><strong>' +
                     blockLabel(block.type) + '</strong>' + actions + '</div>' +
                     '<label class="media-file-label">端末からファイルを選択' +
                     '<input type="file" data-media-file="' + index + '" accept="' + accept + '">' +
-                    '</label>' + status +
+                    '</label>' + status + sizeControls +
                     '<input class="image-caption-input" data-caption="' + index +
                     '" value="' + escapeHTML(block.settings?.caption || "") +
                     '" placeholder="キャプション（任意）"></div>';
@@ -118,10 +133,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             const block = blocks[Number(field.dataset.caption)];
             block.settings = { ...block.settings, caption: field.value };
         }
+        if (field.dataset.width !== undefined) {
+            const index = Number(field.dataset.width);
+            const block = blocks[index];
+            const width = Math.min(100, Math.max(20, Number(field.value) || 100));
+            block.settings = { ...block.settings, width };
+            const output = document.querySelector('[data-width-value="' + index + '"]');
+            if (output) output.textContent = width + "%";
+        }
     });
 
     $("#blockList").addEventListener("change", async (event) => {
         const field = event.target;
+        if (field.dataset.align !== undefined) {
+            const block = blocks[Number(field.dataset.align)];
+            if (block) block.settings = { ...block.settings, align: field.value };
+            return;
+        }
         if (field.dataset.mediaFile === undefined) return;
 
         const index = Number(field.dataset.mediaFile);
