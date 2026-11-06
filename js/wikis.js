@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const descriptionInput = document.getElementById("wikiDescription");
     const iconInput = document.getElementById("wikiIcon");
     const colorInput = document.getElementById("wikiColor");
+    const groupInput = document.getElementById("wikiGroup");
     const editingIdInput = document.getElementById("editingWikiId");
 
     const dialogTitle = document.getElementById("dialogTitle");
@@ -26,6 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let wikis = [];
     let articles = [];
+    let groups = [];
+    const requestedGroupId = new URLSearchParams(window.location.search).get("groupId");
     let toastTimer = null;
 
     function showToast(message) {
@@ -76,20 +79,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function loadData() {
         await WikiHubStorage.init();
 
-        [wikis, articles] = await Promise.all([
+        [wikis, articles, groups] = await Promise.all([
             WikiHubStorage.getAllWikis(),
-            WikiHubStorage.getAllArticles()
+            WikiHubStorage.getAllArticles(),
+            WikiHubStorage.getAllGroups()
         ]);
+        renderGroupOptions();
 
         renderWikis();
+    }
+
+    function renderGroupOptions(selectedId = "") {
+        groupInput.innerHTML = groups.map(group => '<option value="' + escapeHTML(group.id) + '">' + escapeHTML(group.name) + '</option>').join("");
+        const fallback = (groups.find(group => group.isDefault) || groups[0] || {}).id || "";
+        groupInput.value = selectedId || requestedGroupId || fallback;
+    }
+
+    function getGroupName(groupId) {
+        return (groups.find(group => group.id === groupId) || {}).name || "未分類";
     }
 
     function renderWikis() {
         const keyword = searchInput.value.trim().toLowerCase();
 
         const filtered = wikis.filter((wiki) => {
-            const text = `${wiki.name} ${wiki.description}`.toLowerCase();
-            return text.includes(keyword);
+            const text = (wiki.name + " " + wiki.description + " " + getGroupName(wiki.groupId)).toLowerCase();
+            const matchesGroup = !requestedGroupId || wiki.groupId === requestedGroupId;
+            return matchesGroup && text.includes(keyword);
         });
 
         wikiTotal.textContent = wikis.length;
@@ -157,6 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         editingIdInput.value = "";
         colorInput.value = "#6558e8";
+        renderGroupOptions(requestedGroupId || "");
 
         dialogTitle.textContent = "Wikiを作成";
         dialogEyebrow.textContent = "NEW WORKSPACE";
@@ -174,6 +191,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         descriptionInput.value = wiki.description || "";
         iconInput.value = wiki.icon || "📚";
         colorInput.value = wiki.color || "#6558e8";
+        renderGroupOptions(wiki.groupId || "");
 
         dialogTitle.textContent = "Wikiを編集";
         dialogEyebrow.textContent = "EDIT WORKSPACE";
@@ -205,7 +223,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             name,
             description: descriptionInput.value.trim(),
             icon: iconInput.value,
-            color: colorInput.value
+            color: colorInput.value,
+            groupId: groupInput.value
         };
 
         try {
