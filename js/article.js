@@ -60,12 +60,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             const src = escapeHTML(mediaUrl(media.blob));
             const caption = escapeHTML(block.settings?.caption || "");
             if (block.type === "image") {
-                return '<figure class="article-image"><img src="' + src + '" alt="' +
+                const width = Math.min(100, Math.max(20, Number(block.settings?.width) || 100));
+                const align = ["left", "center", "right"].includes(block.settings?.align)
+                    ? block.settings.align : "center";
+                const margin = align === "left" ? "0 auto 24px 0" :
+                    align === "right" ? "0 0 24px auto" : "0 auto 24px";
+                return '<figure class="article-image" style="width:' + width + '%;margin:' + margin +
+                    '"><img src="' + src + '" alt="' +
                     escapeHTML(block.settings?.alt || media.name || "") + '">' +
                     (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>';
             }
             if (block.type === "video") {
-                return '<figure class="article-video"><video controls preload="metadata" src="' +
+                const width = Math.min(100, Math.max(20, Number(block.settings?.width) || 100));
+                const align = ["left", "center", "right"].includes(block.settings?.align)
+                    ? block.settings.align : "center";
+                const margin = align === "left" ? "0 auto 24px 0" :
+                    align === "right" ? "0 0 24px auto" : "0 auto 24px";
+                return '<figure class="article-video" style="width:' + width + '%;margin:' + margin +
+                    '"><video controls preload="metadata" src="' +
                     src + '">このブラウザは動画再生に対応していません。</video>' +
                     (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>';
             }
