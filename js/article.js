@@ -34,6 +34,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function renderBlock(block) {
         const content = String(block.content ?? "");
         if (block.type === "divider") return '<hr class="article-divider">';
+        if (block.type === "internalLink") {
+            const settings = block.settings || {};
+            const targetType = settings.targetType;
+            const targetId = settings.targetId;
+            if (!targetId || !["article", "wiki", "group"].includes(targetType)) {
+                return '<p class="article-invalid-link">内部リンクの設定が正しくありません。</p>';
+            }
+            let target = null;
+            let href = "";
+            if (targetType === "article") {
+                target = await WikiHubStorage.getArticle(targetId);
+                if (target) href = "article.html?id=" + encodeURIComponent(target.id);
+            } else if (targetType === "wiki") {
+                target = await WikiHubStorage.getWiki(targetId);
+                if (target) href = "wiki.html?id=" + encodeURIComponent(target.id);
+            } else {
+                target = await WikiHubStorage.getGroup(targetId);
+                if (target) href = "wikis.html?groupId=" + encodeURIComponent(target.id);
+            }
+            if (!target) return '<p class="article-invalid-link">リンク先が見つかりません（削除された可能性があります）。</p>';
+            const targetName = targetType === "article" ? target.title : target.name;
+            const label = String(settings.label || targetName || "リンク").trim();
+            return '<p class="article-internal-link"><a href="' + href + '">' +
+                escapeHTML(label) + ' <span aria-hidden="true">↗</span></a></p>';
+        }
         if (block.type === "heading") return '<h2>' + escapeHTML(content) + '</h2>';
         if (block.type === "subheading") return '<h3>' + escapeHTML(content) + '</h3>';
         if (block.type === "quote") return '<blockquote>' + escapeHTML(content).replace(/\n/g, "<br>") + '</blockquote>';
