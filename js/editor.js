@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let article = null;
     let blocks = [];
     let toastTimer = null;
+    let allGroups = [];
+    let allWikis = [];
+    let allArticles = [];
 
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -41,7 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             divider: "水平線",
             image: "画像",
             video: "動画",
-            audio: "音声"
+            audio: "音声",
+            internalLink: "内部リンク"
         })[type] || "ブロック";
     }
 
@@ -63,6 +67,36 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (block.type === "divider") {
                 return '<div class="editor-block"><div class="editor-block-top"><strong>水平線</strong>' +
                     actions + '</div><div class="divider-preview"><hr></div></div>';
+            }
+
+            if (block.type === "internalLink") {
+                const targetType = ["article", "wiki", "group"].includes(block.settings?.targetType)
+                    ? block.settings.targetType : "article";
+                const targets = targetType === "article" ? allArticles :
+                    targetType === "wiki" ? allWikis : allGroups;
+                const targetId = block.settings?.targetId || "";
+                const options = targets.map((target) => {
+                    const name = targetType === "article" ? target.title : target.name;
+                    const parent = targetType === "article"
+                        ? "（" + ((allWikis.find((item) => item.id === target.wikiId) || {}).name || "Wiki不明") + "）"
+                        : "";
+                    return '<option value="' + escapeHTML(target.id) + '"' +
+                        (target.id === targetId ? " selected" : "") + '>' +
+                        escapeHTML(name) + escapeHTML(parent) + '</option>';
+                }).join("");
+                return '<div class="editor-block internal-link-editor"><div class="editor-block-top"><strong>内部リンク</strong>' +
+                    actions + '</div><div class="internal-link-fields">' +
+                    '<label>リンク先の種類<select data-link-type="' + index + '">' +
+                    '<option value="article"' + (targetType === "article" ? " selected" : "") + '>記事</option>' +
+                    '<option value="wiki"' + (targetType === "wiki" ? " selected" : "") + '>Wiki</option>' +
+                    '<option value="group"' + (targetType === "group" ? " selected" : "") + '>グループ</option>' +
+                    '</select></label>' +
+                    '<label>リンク先<select data-link-target="' + index + '">' +
+                    '<option value="">リンク先を選択してください</option>' + options +
+                    '</select></label>' +
+                    '<label>表示テキスト（任意）<input type="text" data-link-label="' + index +
+                    '" value="' + escapeHTML(block.settings?.label || "") +
+                    '" placeholder="空欄ならリンク先の名前を表示"></label></div></div>';
             }
 
             if (["image", "video", "audio"].includes(block.type)) {
@@ -133,6 +167,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const block = blocks[Number(field.dataset.caption)];
             block.settings = { ...block.settings, caption: field.value };
         }
+        if (field.dataset.linkLabel !== undefined) {
+            const block = blocks[Number(field.dataset.linkLabel)];
+            block.settings = { ...block.settings, label: field.value };
+        }
         if (field.dataset.width !== undefined) {
             const index = Number(field.dataset.width);
             const block = blocks[index];
@@ -148,6 +186,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (field.dataset.align !== undefined) {
             const block = blocks[Number(field.dataset.align)];
             if (block) block.settings = { ...block.settings, align: field.value };
+            return;
+        }
+        if (field.dataset.linkType !== undefined) {
+            const block = blocks[Number(field.dataset.linkType)];
+            if (block) {
+                block.settings = { ...block.settings, targetType: field.value, targetId: "" };
+                renderBlocks();
+            }
+            return;
+        }
+        if (field.dataset.linkTarget !== undefined) {
+            const block = blocks[Number(field.dataset.linkTarget)];
+            if (block) block.settings = { ...block.settings, targetId: field.value };
             return;
         }
         if (field.dataset.mediaFile === undefined) return;
@@ -274,7 +325,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             for (let index = 0; index < blocks.length; index++) {
                 const block = blocks[index];
                 const isMedia = ["image", "video", "audio"].includes(block.type);
-                if (block.type === "divider" || String(block.content).trim() || isMedia) {
+                const isInternalLink = block.type === "internalLink" && block.settings?.targetId;
+                if (block.type === "divider" || String(block.content).trim() || isMedia || isInternalLink) {
                     await WikiHubStorage.saveArticleBlock({
                         id: block.id.startsWith("local-") ? undefined : block.id,
                         articleId: targetId,
@@ -319,6 +371,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         $("#editorSummary").value = article.summary || "";
         $("#editorTags").value = (article.tags || []).join(", ");
 
+        [allGroups, allWikis, allArticles] = await Promise.all([
+            WikiHubStorage.getAllGroups(),
+            WikiHubStorage.getAllWikis(),
+            WikiHubStorage.getAllArticles()
+        ]);
         blocks = await WikiHubStorage.getArticleBlocks(articleId);
         renderBlocks();
     }
