@@ -2,9 +2,10 @@
 
 (() => {
     const DB_NAME = "WikiHubDB_V4";
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
 
     const STORES = {
+        GROUPS: "groups",
         WIKIS: "wikis",
         ARTICLES: "articles",
         BLOCKS: "articleBlocks",
@@ -53,6 +54,11 @@
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
 
+                if (!db.objectStoreNames.contains(STORES.GROUPS)) {
+                    const groups = db.createObjectStore(STORES.GROUPS, { keyPath: "id" });
+                    groups.createIndex("updatedAt", "updatedAt");
+                }
+
                 if (!db.objectStoreNames.contains(STORES.WIKIS)) {
                     const store = db.createObjectStore(STORES.WIKIS, {
                         keyPath: "id"
@@ -77,6 +83,37 @@
 
                     store.createIndex("articleId", "articleId");
                     store.createIndex("order", "order");
+                }
+
+                const wikiStoreForMigration = event.target.transaction.objectStore(STORES.WIKIS);
+                if (!wikiStoreForMigration.indexNames.contains("groupId")) {
+                    wikiStoreForMigration.createIndex("groupId", "groupId");
+                }
+
+                if (event.oldVersion < 2) {
+                    const now = new Date().toISOString();
+                    const defaultGroupId = createId("group");
+                    event.target.transaction.objectStore(STORES.GROUPS).put({
+                        id: defaultGroupId,
+                        name: "未分類",
+                        description: "既存のWikiや所属先が未設定のWikiをまとめるグループです。",
+                        icon: "📁",
+                        color: "#8b82d9",
+                        isDefault: true,
+                        createdAt: now,
+                        updatedAt: now
+                    });
+                    const cursorRequest = wikiStoreForMigration.openCursor();
+                    cursorRequest.onsuccess = () => {
+                        const cursor = cursorRequest.result;
+                        if (!cursor) return;
+                        const wiki = cursor.value;
+                        if (!wiki.groupId) {
+                            wiki.groupId = defaultGroupId;
+                            cursor.update(wiki);
+                        }
+                        cursor.continue();
+                    };
                 }
 
                 for (const storeName of [
@@ -201,6 +238,72 @@
         return true;
     }
 
+    // グループ管理
+    async function createGroup(data) {
+        const name = String(data.name || "").trim();
+        if (!name) throw new Error("グループ名を入力してください。");
+        const now = new Date().toISOString();
+        const group = {
+            id: createId("group"),
+            name,
+            description: String(data.description || "").trim(),
+            icon: String(data.icon || "📁"),
+            color: String(data.color || "#8b82d9"),
+            isDefault: false,
+            createdAt: now,
+            updatedAt: now
+        };
+        await putIntoStore(STORES.GROUPS, group);
+        return group;
+    }
+
+    async function getGroup(id) {
+        return getFromStore(STORES.GROUPS, id);
+    }
+
+    async function getAllGroups() {
+        const groups = await getAllFromStore(STORES.GROUPS);
+        return groups.sort((a, b) => {
+            if (a.isDefault && !b.isDefault) return 1;
+            if (!a.isDefault && b.isDefault) return -1;
+            return new Date(b.updatedAt) - new Date(a.updatedAt);
+        });
+    }
+
+    async function updateGroup(id, changes) {
+        const group = await getGroup(id);
+        if (!group) throw new Error("指定されたグループが見つかりません。");
+        const updated = {
+            ...group,
+            ...changes,
+            id: group.id,
+            isDefault: group.isDefault,
+            createdAt: group.createdAt,
+            updatedAt: new Date().toISOString()
+        };
+        updated.name = String(updated.name || "").trim();
+        if (!updated.name) throw new Error("グループ名を入力してください。");
+        updated.description = String(updated.description || "").trim();
+        await putIntoStore(STORES.GROUPS, updated);
+        return updated;
+    }
+
+    async function getWikisByGroup(groupId) {
+        return getByIndex(STORES.WIKIS, "groupId", groupId);
+    }
+
+    async function deleteGroup(id) {
+        const group = await getGroup(id);
+        if (!group) throw new Error("グループが見つかりません。");
+        const wikis = await getWikisByGroup(id);
+        if (wikis.length) {
+            throw new Error("このグループにはWikiがあります。先にWikiを別のグループへ移動してください。");
+        }
+        if (group.isDefault) throw new Error("未分類グループは削除できません。");
+        await deleteFromStore(STORES.GROUPS, id);
+        return true;
+    }
+
     // Wiki作成
     async function createWiki(data) {
         const name = String(data.name || "").trim();
@@ -209,10 +312,17 @@
             throw new Error("Wiki名を入力してください。");
         }
 
+        const groups = await getAllGroups();
+        const groupId = data.groupId || groups.find((group) => group.isDefault)?.id || groups[0]?.id;
+        if (!groupId || !await getGroup(groupId)) {
+            throw new Error("所属グループを選択してください。");
+        }
+
         const now = new Date().toISOString();
 
         const wiki = {
             id: createId("wiki"),
+            groupId,
             name,
             description: String(data.description || "").trim(),
             icon: String(data.icon || "📚"),
@@ -599,6 +709,13 @@
     // 公開API
     window.WikiHubStorage = Object.freeze({
         init,
+
+        createGroup,
+        getGroup,
+        getAllGroups,
+        updateGroup,
+        deleteGroup,
+        getWikisByGroup,
 
         createWiki,
         getWiki,
