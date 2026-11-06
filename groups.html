@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7fa">
+<title>グループ管理 - WikiHub</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/groups.css">
+</head>
+<body>
+<div class="app-layout">
+<aside class="sidebar" id="sidebar">
+<div class="brand"><div class="brand-icon">W</div><div class="brand-name">WikiHub<span>V4</span></div></div>
+<div class="sidebar-section">
+<div class="sidebar-label">WORKSPACE</div>
+<a href="index.html" class="nav-item"><span class="nav-icon">⌂</span><span>ホーム</span></a>
+<a href="groups.html" class="nav-item active"><span class="nav-icon">▣</span><span>グループ</span></a>
+<a href="wikis.html" class="nav-item"><span class="nav-icon">▤</span><span>Wiki一覧</span></a>
+<button class="nav-item" data-action="articles"><span class="nav-icon">▧</span><span>すべての記事</span></button>
+</div>
+<div class="sidebar-bottom"><div class="sidebar-version"><span class="status-dot"></span>WikiHub V4.2</div></div>
+</aside>
+<main class="main-area">
+<header class="topbar">
+<button class="icon-button menu-button" id="menuButton">☰</button>
+<div class="breadcrumb"><a href="index.html">WikiHub</a><span class="breadcrumb-separator">/</span><strong>グループ管理</strong></div>
+<div class="topbar-actions"><a href="index.html" class="home-link">ホームへ戻る</a></div>
+</header>
+<div class="page-content">
+<section class="group-heading">
+<div><div class="eyebrow">KNOWLEDGE COLLECTIONS</div><h1>グループ管理</h1><p>関連するWikiをグループにまとめて整理できます。</p></div>
+<button class="primary-button" id="createGroupButton"><span>＋</span>グループを作成</button>
+</section>
+<div class="group-toolbar">
+<div class="wiki-search"><span>⌕</span><input type="search" id="groupSearch" placeholder="グループを検索..."></div>
+<div class="wiki-total"><strong id="groupTotal">0</strong><span>Groups</span></div>
+</div>
+<section class="group-grid" id="groupGrid"><div class="loading-message">グループを読み込んでいます...</div></section>
+<footer class="page-footer"><span>WikiHub V4.2</span><span>Group → Wiki → Article</span></footer>
+</div>
+</main>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<dialog class="modal" id="groupDialog">
+<form id="groupForm">
+<div class="modal-header"><div><div class="eyebrow" id="dialogEyebrow">NEW GROUP</div><h2 id="dialogTitle">グループを作成</h2></div><button type="button" class="modal-close" id="closeDialog">×</button></div>
+<input type="hidden" id="editingGroupId">
+<label for="groupName">グループ名</label><input id="groupName" maxlength="60" placeholder="例：歴史グループ" required>
+<label for="groupDescription">説明</label><textarea id="groupDescription" maxlength="300" rows="3" placeholder="このグループに含めるWiki..."></textarea>
+<label for="groupIcon">アイコン</label><select id="groupIcon"><option value="📁">📁 フォルダ</option><option value="🏛️">🏛️ 歴史</option><option value="🔬">🔬 科学</option><option value="💻">💻 技術</option><option value="🎨">🎨 アート</option><option value="🌍">🌍 地理</option><option value="📚">📚 学習</option></select>
+<label for="groupColor">テーマカラー</label><input type="color" id="groupColor" value="#8b82d9">
+<div class="modal-actions"><button type="button" class="secondary-button" id="cancelDialog">キャンセル</button><button type="submit" class="primary-button" id="saveGroupButton">作成する</button></div>
+</form>
+</dialog>
+<div class="toast" id="toast"></div>
+<script src="js/storage.js"></script><script src="js/groups.js"></script>
+</body>
+</html>
