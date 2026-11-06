@@ -138,6 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
 
                     <div class="managed-wiki-content">
+                        <div class="wiki-group-label">📁 ${escapeHTML(getGroupName(wiki.groupId))}</div>
                         <h3><a class="managed-wiki-title-link" href="wiki.html?id=${encodeURIComponent(wiki.id)}">${escapeHTML(wiki.name)}</a></h3>
 
                         <p>
