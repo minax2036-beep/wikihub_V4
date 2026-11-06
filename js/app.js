@@ -62,32 +62,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderWikis() {
-        const visibleWikis = wikis.slice(0, 5);
-
-        const cards = visibleWikis.map((wiki) => {
-            const count = getArticleCount(wiki.id);
-            const color = /^#[0-9a-f]{6}$/i.test(wiki.color || "")
-                ? wiki.color
-                : "#eeeaff";
-
+        const visibleGroups = groups.slice(0, 5);
+        const cards = visibleGroups.map((group) => {
+            const count = wikis.filter((wiki) => wiki.groupId === group.id).length;
+            const color = /^#[0-9a-f]{6}$/i.test(group.color || "") ? group.color : "#eeeaff";
             return `
                 <a class="wiki-card home-wiki-card"
-                   href="wiki.html?id=${encodeURIComponent(wiki.id)}"
-                   data-search-item="${escapeHTML(wiki.name)} ${escapeHTML(wiki.description)}"
-                   aria-label="${escapeHTML(wiki.name)} を開く">
+                   href="wikis.html?groupId=${encodeURIComponent(group.id)}"
+                   data-search-item="${escapeHTML(group.name)} ${escapeHTML(group.description)}"
+                   aria-label="${escapeHTML(group.name)} を開く">
                     <div class="wiki-card-top">
-                        <div class="wiki-cover home-wiki-cover"
-                             style="background:${color};">
-                            ${escapeHTML(wiki.icon || "📚")}
+                        <div class="wiki-cover home-wiki-cover" style="background:${color};">
+                            ${escapeHTML(group.icon || "📁")}
                         </div>
                     </div>
                     <div class="wiki-card-body">
-                        <div class="wiki-category">MY WIKI</div>
-                        <h3>${escapeHTML(wiki.name)}</h3>
-                        <p>${escapeHTML(wiki.description || "説明はまだありません。")}</p>
+                        <div class="wiki-category">GROUP</div>
+                        <h3>${escapeHTML(group.name)}</h3>
+                        <p>${escapeHTML(group.description || "説明はまだありません。")}</p>
                         <div class="wiki-card-footer">
-                            <span>▧ ${count} 記事</span>
-                            <span>更新: ${formatDate(wiki.updatedAt)}</span>
+                            <span>▤ ${count} Wiki</span>
+                            <span>${group.isDefault ? "既定グループ" : "グループ"}</span>
                         </div>
                     </div>
                 </a>
@@ -95,23 +90,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         }).join("");
 
         wikiGrid.innerHTML = cards + `
-            <button class="new-wiki-card" id="newWikiCard">
+            <a class="new-wiki-card" href="groups.html">
                 <span class="new-wiki-icon">＋</span>
-                <strong>新しいWikiを作成</strong>
-                <span>自分だけの知識ベースを作ろう</span>
-            </button>
+                <strong>グループを管理・作成</strong>
+                <span>Wikiをグループごとに整理しよう</span>
+            </a>
         `;
-
-        $("#newWikiCard").addEventListener("click", openWikiDialog);
 
         const empty = $("#wikiEmptyMessage");
         if (empty) empty.remove();
-
-        if (wikis.length === 0) {
+        if (groups.length === 0) {
             const message = document.createElement("div");
             message.id = "wikiEmptyMessage";
             message.className = "empty-message";
-            message.textContent = "まだWikiがありません。右のカードから最初のWikiを作成しよう！";
+            message.textContent = "グループがありません。グループを作成してWikiを整理しよう！";
             wikiGrid.appendChild(message);
         }
     }
