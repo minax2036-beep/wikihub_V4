@@ -31,6 +31,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         return url;
     }
 
+    async function renderInline(value) {
+        const source = String(value ?? "");
+        const pattern = /\[\[WHL:(article|wiki|group):([^\]]+)\]\]([\s\S]*?)\[\[\/WHL\]\]/g;
+        let output = "";
+        let cursor = 0;
+        let match;
+        while ((match = pattern.exec(source)) !== null) {
+            output += escapeHTML(source.slice(cursor, match.index));
+            const type = match[1];
+            const id = match[2];
+            const label = match[3];
+            let target = null;
+            let href = "";
+            try {
+                if (type === "article") {
+                    target = await WikiHubStorage.getArticle(id);
+                    if (target) href = "article.html?id=" + encodeURIComponent(target.id);
+                } else if (type === "wiki") {
+                    target = await WikiHubStorage.getWiki(id);
+                    if (target) href = "wiki.html?id=" + encodeURIComponent(target.id);
+                } else {
+                    target = await WikiHubStorage.getGroup(id);
+                    if (target) href = "wikis.html?groupId=" + encodeURIComponent(target.id);
+                }
+            } catch (error) {
+                console.warn("内部リンクの読み込みに失敗しました。", error);
+            }
+            output += target
+                ? '<a class="article-inline-link" href="' + href + '">' + escapeHTML(label) + '</a>'
+                : '<span class="article-inline-link-missing">' + escapeHTML(label) + '</span>';
+            cursor = pattern.lastIndex;
+        }
+        output += escapeHTML(source.slice(cursor));
+        return output.replace(/\n/g, "<br>");
+    }
+
     async function renderBlock(block) {
         const content = String(block.content ?? "");
         if (block.type === "divider") return '<hr class="article-divider">';
@@ -59,12 +95,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return '<p class="article-internal-link"><a href="' + href + '">' +
                 escapeHTML(label) + ' <span aria-hidden="true">↗</span></a></p>';
         }
-        if (block.type === "heading") return '<h2>' + escapeHTML(content) + '</h2>';
-        if (block.type === "subheading") return '<h3>' + escapeHTML(content) + '</h3>';
-        if (block.type === "quote") return '<blockquote>' + escapeHTML(content).replace(/\n/g, "<br>") + '</blockquote>';
+        if (block.type === "heading") return '<h2>' + await renderInline(content) + '</h2>';
+        if (block.type === "subheading") return '<h3>' + await renderInline(content) + '</h3>';
+        if (block.type === "quote") return '<blockquote>' + await renderInline(content) + '</blockquote>';
         if (block.type === "list") {
-            return '<ul>' + content.split("\n").filter(Boolean)
-                .map((line) => '<li>' + escapeHTML(line) + '</li>').join("") + '</ul>';
+            const items = [];
+            for (const line of content.split("\n").filter(Boolean)) {
+                items.push('<li>' + await renderInline(line) + '</li>');
+            }
+            return '<ul>' + items.join("") + '</ul>';
         }
 
         if (["image", "video", "audio"].includes(block.type)) {
@@ -119,7 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 escapeHTML(block.settings?.caption || "") + '</figcaption></figure>';
         }
 
-        return '<p>' + escapeHTML(content).replace(/\n/g, "<br>") + '</p>';
+        return '<p>' + await renderInline(content) + '</p>';
     }
 
     async function load() {
