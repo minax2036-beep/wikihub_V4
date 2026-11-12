@@ -4,3 +4,5 @@
 .article-image,.article-video{max-width:100%;box-sizing:border-box}.article-image img{display:block;width:100%;max-width:100%;height:auto;max-height:none;object-fit:contain}.article-video video{width:100%;height:auto}
 
 .article-internal-link{margin:18px 0}.article-internal-link a{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid #d9d4ff;border-radius:10px;background:#f8f7ff;color:var(--primary);font-weight:700;text-decoration:none;transition:background .15s,transform .15s}.article-internal-link a:hover{background:#efedff;transform:translateY(-1px)}.article-invalid-link{padding:10px 13px;border:1px dashed #d8a6a6;border-radius:8px;background:#fff8f8;color:#a34b4b;font-size:13px}
+
+.article-inline-link{color:var(--primary);font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.article-inline-link:hover{color:#4335bd}.article-inline-link-missing{color:var(--text-secondary);text-decoration:underline dotted}
