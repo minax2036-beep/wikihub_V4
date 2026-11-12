@@ -15,12 +15,12 @@
 <div class="sidebar-bottom"><div class="sidebar-version"><span class="status-dot"></span>WikiHub V4.1</div></div></aside>
 <main class="main-area"><header class="topbar"><a class="text-button" href="index.html">← ホームに戻る</a><div class="breadcrumb"><span>WikiHub</span><span class="breadcrumb-separator">/</span><strong>バックアップ＆リストア</strong></div></header>
 <div class="page-content backup-page">
-<section class="welcome-section"><div><div class="eyebrow">DATA MANAGEMENT</div><h1>バックアップ <span>&</span> リストア</h1><p>WikiHubのデータをファイルに保存し、いつでも復元できます。</p></div></section>
+<section class="welcome-section"><div><div class="eyebrow">DATA MANAGEMENT</div><h1>バックアップ <span>&</span> リストア</h1><p>WikiHubのデータを専用ファイルに保存し、いつでも復元できます。</p></div></section>
 <section class="backup-grid">
-<article class="backup-card"><div class="backup-icon backup-icon-export">↓</div><div class="eyebrow">EXPORT DATA</div><h2>バックアップを作成</h2><p>グループ・Wiki・記事・ブロックに加えて、画像・動画・音声もまとめて保存します。</p><button class="primary-button" id="createBackupButton">バックアップをダウンロード</button></article>
-<article class="backup-card"><div class="backup-icon backup-icon-import">↑</div><div class="eyebrow">RESTORE DATA</div><h2>バックアップから復元</h2><p>以前に作成したWikiHubのバックアップファイルを読み込みます。</p><label class="file-picker" for="restoreFile">バックアップファイルを選択</label><input type="file" id="restoreFile" accept=".json,application/json"><div class="selected-file" id="selectedFile">ファイルが選択されていません</div><button class="danger-button" id="restoreButton" disabled>このバックアップを復元</button></article>
+<article class="backup-card"><div class="backup-icon backup-icon-export">↓</div><div class="eyebrow">EXPORT DATA</div><h2>バックアップを作成</h2><p>グループ・Wiki・記事・ブロックと、画像・動画・音声をまとめて .bau ファイルに保存します。SHA-256で整合性も確認できます。</p><button class="primary-button" id="createBackupButton">.bau バックアップをダウンロード</button></article>
+<article class="backup-card"><div class="backup-icon backup-icon-import">↑</div><div class="eyebrow">RESTORE DATA</div><h2>バックアップから復元</h2><p>.bauファイルを読み込み、SHA-256の検証に成功した場合だけ復元します。</p><label class="file-picker" for="restoreFile">.bauファイルを選択</label><input type="file" id="restoreFile" accept=".bau,application/octet-stream,application/zip"><div class="selected-file" id="selectedFile">ファイルが選択されていません</div><button class="danger-button" id="restoreButton" disabled>このバックアップを復元</button></article>
 </section>
 <section class="backup-info"><h2>現在のデータ</h2><div class="data-counts" id="dataCounts"><div><strong>—</strong><span>グループ</span></div><div><strong>—</strong><span>Wiki</span></div><div><strong>—</strong><span>記事</span></div><div><strong>—</strong><span>メディア</span></div></div></section>
-<section class="backup-warning"><strong>⚠ 復元時の注意</strong><p>リストアすると、現在のWikiHubデータはバックアップ内の内容に置き換わります。復元前に、必要なら現在のデータもバックアップしてください。</p><p>バックアップファイルには記事の添付メディアも含まれるため、データ量によってはファイルサイズが大きくなります。</p></section>
+<section class="backup-warning"><strong>⚠ 復元時の注意</strong><p>リストアすると、現在のWikiHubデータはバックアップ内の内容に置き換わります。復元前のデータは自動保存されません。</p><p>復元前にZIP内のファイルとSHA-256を検証します。検証に失敗した場合、データベースは変更しません。</p><p>バックアップには記事の添付メディアも含まれます。ファイルサイズによっては作成・復元に時間がかかります。</p></section>
 <div class="backup-status" id="backupStatus" role="status" aria-live="polite"></div>
 </div></main></div><script src="js/backup.js"></script></body></html>
