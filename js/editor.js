@@ -141,11 +141,35 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
             const rows = block.type === "paragraph" || block.type === "quote" || block.type === "list" ? 4 : 2;
 
+            const inlineType = ["article", "wiki", "group"].includes(block.settings?.inlineTargetType)
+                ? block.settings.inlineTargetType : "article";
+            const inlineTargets = inlineType === "article" ? allArticles :
+                inlineType === "wiki" ? allWikis : allGroups;
+            const inlineOptions = inlineTargets.map((target) => {
+                const name = inlineType === "article" ? target.title : target.name;
+                const parent = inlineType === "article"
+                    ? "（" + ((allWikis.find((item) => item.id === target.wikiId) || {}).name || "Wiki不明") + "）"
+                    : "";
+                return '<option value="' + escapeHTML(target.id) + '"' +
+                    (target.id === (block.settings?.inlineTargetId || "") ? " selected" : "") + '>' +
+                    escapeHTML(name) + escapeHTML(parent) + '</option>';
+            }).join("");
             return '<div class="editor-block"><div class="editor-block-top"><strong>' +
                 blockLabel(block.type) + '</strong>' + actions + '</div>' +
                 '<textarea data-content="' + index + '" rows="' + rows +
                 '" placeholder="' + placeholders[block.type] + '">' +
-                escapeHTML(block.content) + '</textarea></div>';
+                escapeHTML(block.content) + '</textarea>' +
+                '<div class="inline-link-tools">' +
+                '<span>選択した文字にリンクを設定</span>' +
+                '<select data-inline-type="' + index + '">' +
+                '<option value="article"' + (inlineType === "article" ? " selected" : "") + '>記事</option>' +
+                '<option value="wiki"' + (inlineType === "wiki" ? " selected" : "") + '>Wiki</option>' +
+                '<option value="group"' + (inlineType === "group" ? " selected" : "") + '>グループ</option>' +
+                '</select>' +
+                '<select data-inline-target="' + index + '"><option value="">リンク先を選択</option>' +
+                inlineOptions + '</select>' +
+                '<button type="button" data-inline-apply="' + index + '">選択範囲をリンク化</button>' +
+                '</div></div>';
         }).join("");
     }
 
@@ -201,6 +225,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (block) block.settings = { ...block.settings, targetId: field.value };
             return;
         }
+        if (field.dataset.inlineType !== undefined) {
+            const block = blocks[Number(field.dataset.inlineType)];
+            if (block) {
+                block.settings = { ...block.settings, inlineTargetType: field.value, inlineTargetId: "" };
+                renderBlocks();
+            }
+            return;
+        }
+        if (field.dataset.inlineTarget !== undefined) {
+            const block = blocks[Number(field.dataset.inlineTarget)];
+            if (block) block.settings = { ...block.settings, inlineTargetId: field.value };
+            return;
+        }
         if (field.dataset.mediaFile === undefined) return;
 
         const index = Number(field.dataset.mediaFile);
@@ -245,6 +282,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     $("#blockList").addEventListener("click", (event) => {
         const button = event.target.closest("button");
         if (!button) return;
+
+        if (button.dataset.inlineApply !== undefined) {
+            const index = Number(button.dataset.inlineApply);
+            const block = blocks[index];
+            const textarea = document.querySelector('textarea[data-content="' + index + '"]');
+            const targetType = block?.settings?.inlineTargetType || "article";
+            const targetId = block?.settings?.inlineTargetId || "";
+            if (!block || !textarea) return;
+            if (!targetId) {
+                showToast("先にリンク先を選択してください。");
+                return;
+            }
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            if (start === end) {
+                showToast("リンクにしたい文字を選択してください。");
+                textarea.focus();
+                return;
+            }
+            const selected = block.content.slice(start, end);
+            if (selected.includes("[[WHL:") || selected.includes("[[/WHL]]")) {
+                showToast("リンク記法が含まれる範囲は選択できません。");
+                return;
+            }
+            const markerStart = "[[WHL:" + targetType + ":" + targetId + "]]";
+            const markerEnd = "[[/WHL]]";
+            block.content = block.content.slice(0, start) + markerStart + selected + markerEnd + block.content.slice(end);
+            renderBlocks();
+            showToast("選択した文字を内部リンクにしました。");
+            return;
+        }
 
         if (button.dataset.remove !== undefined) {
             blocks.splice(Number(button.dataset.remove), 1);
