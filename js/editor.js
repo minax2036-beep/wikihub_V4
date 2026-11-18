@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let allGroups = [];
     let allWikis = [];
     let allArticles = [];
+    let allTemplates = [];
 
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -338,6 +339,81 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+
+    function renderTemplateOptions() {
+        const select = $("#templateSelect");
+        select.innerHTML = '<option value="">テンプレートを選択...</option>' +
+            allTemplates.map(item => '<option value="' + escapeHTML(item.id) + '">' +
+                escapeHTML(item.name) + '</option>').join("");
+    }
+
+    async function applySelectedTemplate() {
+        const id = $("#templateSelect").value;
+        if (!id) {
+            showToast("テンプレートを選択してください。");
+            return;
+        }
+        const template = await WikiHubStorage.getTemplate(id);
+        if (!template) {
+            showToast("テンプレートが見つかりません。");
+            return;
+        }
+        if (!window.confirm("現在の概要・タグ・本文ブロックをテンプレートの内容に置き換えます。\n記事タイトルは変更されません。続行しますか？")) return;
+
+        $("#editorSummary").value = template.summary || "";
+        $("#editorTags").value = (template.tags || []).join(", ");
+        blocks = (template.blocks || []).map((block, index) => ({
+            id: "local-template-" + Date.now() + "-" + index + "-" + Math.random().toString(16).slice(2),
+            type: block.type || "paragraph",
+            content: block.content ?? "",
+            settings: block.settings && typeof block.settings === "object" ? { ...block.settings } : {}
+        }));
+        renderBlocks();
+        showToast("テンプレートを適用しました。保存すると記事に反映されます。");
+    }
+
+    async function saveCurrentAsTemplate() {
+        const name = window.prompt("テンプレート名を入力してください。");
+        if (name === null) return;
+        if (!name.trim()) {
+            showToast("テンプレート名を入力してください。");
+            return;
+        }
+        const description = window.prompt("テンプレートの説明（任意）") || "";
+        const supportedTypes = new Set(["paragraph", "heading", "subheading", "quote", "list", "divider"]);
+        const templateBlocks = blocks
+            .filter(block => supportedTypes.has(block.type))
+            .map(block => ({
+                type: block.type,
+                content: String(block.content ?? ""),
+                settings: block.settings && typeof block.settings === "object" ? { ...block.settings } : {}
+            }));
+        try {
+            const template = await WikiHubStorage.createTemplate({
+                name: name.trim(),
+                description,
+                summary: $("#editorSummary").value,
+                tags: $("#editorTags").value.split(",").map(tag => tag.trim()).filter(Boolean),
+                blocks: templateBlocks
+            });
+            allTemplates = await WikiHubStorage.getAllTemplates();
+            renderTemplateOptions();
+            $("#templateSelect").value = template.id;
+            showToast("全Wiki共通テンプレートを保存しました！");
+        } catch (error) {
+            console.error(error);
+            showToast("テンプレートの保存に失敗しました: " + error.message);
+        }
+    }
+
+    $("#applyTemplateButton").addEventListener("click", () => {
+        applySelectedTemplate().catch(error => {
+            console.error(error);
+            showToast("テンプレートを適用できませんでした: " + error.message);
+        });
+    });
+    $("#saveTemplateButton").addEventListener("click", saveCurrentAsTemplate);
+
     async function cleanupUnusedMedia(targetId) {
         const used = new Set(
             blocks.filter((block) => ["image", "video", "audio"].includes(block.type))
@@ -444,8 +520,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             WikiHubStorage.getAllWikis(),
             WikiHubStorage.getAllArticles()
         ]);
-        blocks = await WikiHubStorage.getArticleBlocks(articleId);
+        [blocks, allTemplates] = await Promise.all([
+            WikiHubStorage.getArticleBlocks(articleId),
+            WikiHubStorage.getAllTemplates()
+        ]);
         renderBlocks();
+        renderTemplateOptions();
     }
 
     $("#menuButton").addEventListener("click", () => {
