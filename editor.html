@@ -26,6 +26,15 @@
 <label for="editorSummary">概要</label><textarea id="editorSummary" rows="3" maxlength="1200" placeholder="記事の概要"></textarea>
 <label for="editorTags">タグ（カンマ区切り）</label><input id="editorTags" type="text" maxlength="500" placeholder="技術, Linux, Raspberry Pi">
 </section>
+<section class="template-toolbar">
+<div class="template-toolbar-copy"><strong>記事テンプレート</strong><span>全Wiki共通のテンプレートを呼び出せます。</span></div>
+<div class="template-toolbar-controls">
+<select id="templateSelect" aria-label="テンプレートを選択"><option value="">テンプレートを選択...</option></select>
+<button type="button" class="secondary-button" id="applyTemplateButton">適用</button>
+<button type="button" class="secondary-button" id="saveTemplateButton">現在の記事をテンプレートとして保存</button>
+<a class="home-link" href="templates.html">管理</a>
+</div>
+</section>
 <section class="editor-content-section">
 <div class="editor-section-heading"><div><div class="eyebrow">CONTENT BLOCKS</div><h2>本文</h2></div><span id="blockCount">0 ブロック</span></div>
 <div id="blockList" class="editor-block-list"></div>
