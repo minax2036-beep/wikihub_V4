@@ -2,7 +2,7 @@
 
 (() => {
     const DB_NAME = "WikiHubDB_V4";
-    const DB_VERSION = 2;
+    const DB_VERSION = 3;
 
     const STORES = {
         GROUPS: "groups",
@@ -11,7 +11,8 @@
         BLOCKS: "articleBlocks",
         IMAGES: "images",
         VIDEOS: "videos",
-        AUDIOS: "audios"
+        AUDIOS: "audios",
+        TEMPLATES: "templates"
     };
 
     let databasePromise = null;
@@ -114,6 +115,11 @@
                         }
                         cursor.continue();
                     };
+                }
+
+                if (!db.objectStoreNames.contains(STORES.TEMPLATES)) {
+                    const templates = db.createObjectStore(STORES.TEMPLATES, { keyPath: "id" });
+                    templates.createIndex("updatedAt", "updatedAt");
                 }
 
                 for (const storeName of [
@@ -680,6 +686,63 @@
         return getByIndex(storeName, "articleId", articleId);
     }
 
+
+    // 全Wiki共通テンプレート
+    async function createTemplate(data) {
+        const name = String(data.name || "").trim();
+        if (!name) throw new Error("テンプレート名を入力してください。");
+        if (!Array.isArray(data.blocks)) throw new Error("テンプレート本文が不正です。");
+        const now = new Date().toISOString();
+        const template = {
+            id: createId("template"),
+            name,
+            description: String(data.description || "").trim(),
+            summary: String(data.summary || ""),
+            tags: Array.isArray(data.tags) ? data.tags.map(tag => String(tag)) : [],
+            blocks: data.blocks.map((block, index) => ({
+                type: String(block.type || "paragraph"),
+                content: String(block.content ?? ""),
+                order: index,
+                settings: block.settings && typeof block.settings === "object" ? { ...block.settings } : {}
+            })),
+            createdAt: now,
+            updatedAt: now
+        };
+        await putIntoStore(STORES.TEMPLATES, template);
+        return template;
+    }
+
+    async function getTemplate(id) {
+        return getFromStore(STORES.TEMPLATES, id);
+    }
+
+    async function getAllTemplates() {
+        const templates = await getAllFromStore(STORES.TEMPLATES);
+        return templates.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    }
+
+    async function updateTemplate(id, changes) {
+        const template = await getTemplate(id);
+        if (!template) throw new Error("テンプレートが見つかりません。");
+        const updated = {
+            ...template,
+            ...changes,
+            id: template.id,
+            createdAt: template.createdAt,
+            updatedAt: new Date().toISOString()
+        };
+        updated.name = String(updated.name || "").trim();
+        if (!updated.name) throw new Error("テンプレート名を入力してください。");
+        updated.description = String(updated.description || "").trim();
+        if (!Array.isArray(updated.blocks)) throw new Error("テンプレート本文が不正です。");
+        await putIntoStore(STORES.TEMPLATES, updated);
+        return updated;
+    }
+
+    async function deleteTemplate(id) {
+        return deleteFromStore(STORES.TEMPLATES, id);
+    }
+
     // 統計情報
     async function getStatistics() {
         const [wikis, articles] = await Promise.all([
@@ -738,6 +801,12 @@
         getMedia,
         getMediaByArticle,
         deleteMedia,
+
+        createTemplate,
+        getTemplate,
+        getAllTemplates,
+        updateTemplate,
+        deleteTemplate,
 
         getStatistics
     });
