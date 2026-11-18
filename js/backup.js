@@ -1,8 +1,8 @@
 "use strict";
 (() => {
 const DB_NAME = "WikiHubDB_V4";
-const DB_VERSION = 2;
-const STORE_NAMES = ["groups", "wikis", "articles", "articleBlocks", "images", "videos", "audios"];
+const DB_VERSION = 3;
+const STORE_NAMES = ["groups", "wikis", "articles", "articleBlocks", "images", "videos", "audios", "templates"];
 const MEDIA_STORES = new Set(["images", "videos", "audios"]);
 const FORMAT = "WikiHubBAU";
 const FORMAT_VERSION = 2;
@@ -188,7 +188,7 @@ async function loadCounts() {
     const tx = db.transaction(STORE_NAMES, "readonly");
     const values = await Promise.all(STORE_NAMES.map(name => requestResult(tx.objectStore(name).count())));
     counts.replaceChildren();
-    for (const [label, value] of [["グループ", values[0]], ["Wiki", values[1]], ["記事", values[2]], ["メディア", values[4] + values[5] + values[6]]]) {
+    for (const [label, value] of [["グループ", values[0]], ["Wiki", values[1]], ["記事", values[2]], ["テンプレート", values[7]], ["メディア", values[4] + values[5] + values[6]]]) {
       const box = document.createElement("div");
       const strong = document.createElement("strong");
       const span = document.createElement("span");
@@ -321,7 +321,12 @@ async function validateArchive(file) {
   }
   const database = JSON.parse(decoder.decode(files.get("database.json")));
   if (!database || database.format !== "WikiHubDatabase" || database.version !== 1 || database.database !== DB_NAME || !database.stores) throw new Error("database.json の形式が不正です。");
-  for (const name of STORE_NAMES) if (!Array.isArray(database.stores[name])) throw new Error("データストアがありません: " + name);
+  for (const name of STORE_NAMES) {
+    if (!Array.isArray(database.stores[name])) {
+      if (name === "templates") database.stores[name] = [];
+      else throw new Error("データストアがありません: " + name);
+    }
+  }
   const mediaPaths = new Set();
   for (const name of MEDIA_STORES) {
     for (const record of database.stores[name]) {
