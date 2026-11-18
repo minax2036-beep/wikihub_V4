@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7fa">
+<title>記事テンプレート - WikiHub</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/templates.css">
+</head>
+<body>
+<div class="app-layout">
+<aside class="sidebar">
+<div class="brand"><div class="brand-icon">W</div><div class="brand-name">WikiHub<span>V4</span></div></div>
+<div class="sidebar-section"><div class="sidebar-label">WORKSPACE</div>
+<a href="index.html" class="nav-item"><span class="nav-icon">⌂</span><span>ホーム</span></a>
+<a href="groups.html" class="nav-item"><span class="nav-icon">▣</span><span>グループ</span></a>
+<a href="wikis.html" class="nav-item"><span class="nav-icon">▤</span><span>Wiki一覧</span></a></div>
+<div class="sidebar-section"><div class="sidebar-label">TOOLS</div>
+<a href="templates.html" class="nav-item active"><span class="nav-icon">▧</span><span>記事テンプレート</span></a>
+<a href="backup.html" class="nav-item"><span class="nav-icon">⤓</span><span>バックアップ＆リストア</span></a></div>
+<div class="sidebar-bottom"><div class="sidebar-version"><span class="status-dot"></span>WikiHub V4.1</div></div>
+</aside>
+<main class="main-area">
+<header class="topbar"><button class="icon-button menu-button" id="menuButton" aria-label="メニュー">☰</button><div class="breadcrumb"><a href="index.html">WikiHub</a><span class="breadcrumb-separator">/</span><strong>記事テンプレート</strong></div></header>
+<div class="page-content templates-page">
+<section class="welcome-section"><div><div class="eyebrow">GLOBAL ARTICLE TEMPLATES</div><h1>記事テンプレート</h1><p>ここで保存したテンプレートは、すべてのWikiで共通して使えます。</p></div><a class="primary-button" href="wikis.html">Wikiを開く</a></section>
+<section class="template-help"><strong>テンプレートの作成方法</strong><p>記事エディターで概要・タグ・本文ブロックを整え、「現在の記事をテンプレートとして保存」を押してください。画像・動画・音声・内部リンクはテンプレートには含まれません。</p></section>
+<section class="template-list-section"><div class="template-list-heading"><h2>保存済みテンプレート</h2><span id="templateCount">読み込み中...</span></div><div id="templateList" class="template-list"><div class="template-empty">テンプレートを読み込んでいます...</div></div></section>
+</div>
+</main>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="toast" id="toast"></div>
+<script src="js/storage.js"></script>
+<script src="js/templates.js"></script>
+</body>
+</html>
